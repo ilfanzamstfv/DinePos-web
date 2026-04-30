@@ -6,9 +6,19 @@ import { useCartStore } from '@/store/useCartStore';
 import { formatPrice } from '@/lib/utils';
 import CartItemRow from './CartItem';
 import CheckoutButton from './CheckoutButton';
+import { useState } from 'react';
+
+const PAYMENT_METHODS = [
+    { value: 'cash', label: 'Cash' },
+    { value: 'qris', label: 'Qris' },
+];
 
 export default function CartSidebar() {
     const { items, subtotal, tax, total, clearCart, isCartOpen, closeCart } = useCartStore();
+
+    // local state form checkout
+    const [customerName, setCustomerName] = useState('');
+    const [paymentMethod, setPaymentMethod] = useState('');
 
     const sub = subtotal();
     const taxAmt = tax();
@@ -46,6 +56,10 @@ export default function CartSidebar() {
                     isEmpty={isEmpty}
                     clearCart={clearCart}
                     closeCart={closeCart}
+                    customerName={customerName}
+                    paymentMethod={paymentMethod}
+                    setCustomerName={setCustomerName}
+                    setPaymentMethod={setPaymentMethod}
                 />
             </aside>
         </>
@@ -60,9 +74,25 @@ interface CartContentProps {
     isEmpty: boolean;
     clearCart: () => void;
     closeCart: () => void;
+    customerName: string;
+    paymentMethod: string;
+    setCustomerName: (value: string) => void;
+    setPaymentMethod: (value: string) => void;
 }
 
-function CartContent({ items, sub, taxAmt, totalAmt, isEmpty, clearCart, closeCart }: CartContentProps) {
+function CartContent({
+    items,
+    sub,
+    taxAmt,
+    totalAmt,
+    isEmpty,
+    clearCart,
+    closeCart,
+    customerName,
+    setCustomerName,
+    paymentMethod,
+    setPaymentMethod,
+}: CartContentProps) {
     return (
         <div className="flex h-full flex-col overflow-hidden">
             {/* Header */}
@@ -127,7 +157,7 @@ function CartContent({ items, sub, taxAmt, totalAmt, isEmpty, clearCart, closeCa
                 </AnimatePresence>
             </div>
 
-            {/* Totals & Checkout */}
+            {/* Totals, form, Checkout */}
             {!isEmpty && (
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -136,6 +166,37 @@ function CartContent({ items, sub, taxAmt, totalAmt, isEmpty, clearCart, closeCa
                 >
                     {/* Breakdown */}
                     <div className="mb-3 space-y-1.5">
+                        <div className="mb-3 space-y-2">
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold text-stone-600">
+                                    Nama Pemesan
+                                </label>
+                                <input
+                                    type="text"
+                                    value={customerName}
+                                    onChange={(e) => setCustomerName(e.target.value)}
+                                    placeholder="Masukkan nama anda"
+                                    className="w-full rounded-xl border border-stone-200 px-3 py-2.5 text-sm outline-none transition focus:border-[#5D866C] focus:ring-2 focus:ring-[#5D866C]/20"
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold text-stone-600">
+                                    Metode Pembayaran
+                                </label>
+                                <select
+                                    value={paymentMethod}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                    className="w-full rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#5D866C] focus:ring-2 focus:ring-[#5D866C]/20"
+                                >
+                                    <option value="">Pilih metode pembayaran</option>
+                                    {PAYMENT_METHODS.map((method) => (
+                                        <option key={method.value} value={method.value}>
+                                            {method.label}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
                         <div className="flex justify-between text-sm text-stone-500">
                             <span>Subtotal</span>
                             <span>{formatPrice(sub)}</span>
@@ -151,7 +212,7 @@ function CartContent({ items, sub, taxAmt, totalAmt, isEmpty, clearCart, closeCa
                         </div>
                     </div>
 
-                    <CheckoutButton />
+                    <CheckoutButton customerName={customerName} paymentMethod={paymentMethod} />
                 </motion.div>
             )}
         </div>

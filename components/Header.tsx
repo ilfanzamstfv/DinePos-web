@@ -1,8 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ShoppingCart, ChefHat } from 'lucide-react';
+import { ShoppingCart, ChefHat, LogIn } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
+import Link from 'next/link';
 
 export default function Header() {
     const { itemCount, toggleCart } = useCartStore();
@@ -48,6 +49,15 @@ export default function Header() {
                             })}
                         </p>
                     </div>
+
+                    <Link
+                        href="/auth"
+                        className='inline-flex items-center gap-2 rounded-xl border border-stone-300 bg-white px-3 py-2 text-sm font-semibold text-stone-700 transition hover:border-[#5D866C] hover:text-[#5D866C]'
+                    >
+                        <LogIn className='h-4 w-4' />
+                        <span className='hidden sm:inline'>Login Admin</span>
+                        <span className='sm:hidden'>Login</span>
+                    </Link>
 
                     {/* Cart Button (mobile only) */}
                     <button

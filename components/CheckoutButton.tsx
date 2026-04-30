@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Loader2, CreditCard, AlertCircle } from 'lucide-react';
+import { Loader2, ShoppingCart, AlertCircle } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
 import { generateOrderId } from '@/lib/utils';
 
@@ -40,13 +40,28 @@ function loadSnapScript(): Promise<void> {
     });
 }
 
-export default function CheckoutButton() {
-    const { items, subtotal, total, clearCart, openReceipt } = useCartStore();
+interface CheckoutButtonProps {
+    customerName: string;
+    paymentMethod: string;
+}
+
+export default function CheckoutButton({ customerName, paymentMethod }: CheckoutButtonProps) {
+    const { items, total, clearCart, openReceipt } = useCartStore();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const handleCheckout = async () => {
         if (items.length === 0) return;
+
+        if (!customerName.trim()) {
+            setError('Please enter customer name');
+            return;
+        }
+
+        if (!paymentMethod) {
+            setError('Please select payment method');
+            return;
+        }
 
         setLoading(true);
         setError(null);
@@ -61,6 +76,8 @@ export default function CheckoutButton() {
                 body: JSON.stringify({
                     order_id: orderId,
                     gross_amount: total(),
+                    customer_name: customerName.trim(), // statis
+                    payment_method: paymentMethod,      // statis
                     items: items.map((item) => ({
                         id: item.id,
                         name: item.name,
@@ -142,7 +159,7 @@ export default function CheckoutButton() {
                     </>
                 ) : (
                     <>
-                        <CreditCard className="h-4 w-4" />
+                        <ShoppingCart className="h-4 w-4" />
                         <span>Checkout Now</span>
                     </>
                 )}
