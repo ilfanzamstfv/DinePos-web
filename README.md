@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DinePos
 
-## Getting Started
+DinePos adalah aplikasi **Point of Sale (POS) untuk bisnis Food & Beverage** yang dibuat dengan Next.js. Aplikasi ini menyediakan katalog menu, pemilihan kategori, keranjang pesanan, checkout dengan Midtrans Snap, serta halaman login dan dashboard untuk kebutuhan administrasi.
 
-First, run the development server:
+## Preview UI
+
+### Halaman Kasir
+
+![Halaman kasir DinePos](./preview/menu-1.png)
+
+Tampilan utama kasir dengan kategori menu, pencarian, kartu produk, dan ringkasan pesanan. Sumber gambar: screenshot UI project ini, [`preview/menu-1.png`](./preview/menu-1.png).
+
+### Menu dan Keranjang
+
+![Menu dan keranjang DinePos](./preview/menu-2.png)
+
+Preview interaksi katalog menu dan keranjang pesanan. Sumber gambar: screenshot UI project ini, [`preview/menu-2.png`](./preview/menu-2.png).
+
+### Dashboard Admin
+
+![Dashboard admin DinePos](./preview/dashboard.png)
+
+Dashboard admin berisi ringkasan pendapatan, jumlah pesanan, stok rendah, user aktif, modul manajemen, dan aktivitas terbaru. Sumber gambar: screenshot UI project ini, [`preview/dashboard.png`](./preview/dashboard.png).
+
+## Fitur
+
+- Menampilkan menu berdasarkan kategori: makanan, minuman, dan dessert.
+- Mencari menu dan menambahkan item ke keranjang.
+- Mengatur jumlah item dan menghitung subtotal pesanan.
+- Checkout melalui Midtrans Snap, dengan mode demo jika server key belum diatur.
+- Menerima notifikasi status pembayaran melalui webhook Midtrans.
+- Login admin dengan validasi form dan redirect ke dashboard.
+- Dashboard admin untuk preview pengelolaan menu, user, role, pajak, stok, dan laporan.
+- Layout responsif untuk desktop dan perangkat mobile.
+- Pembuatan receipt setelah checkout menggunakan jsPDF.
+
+## Teknologi
+
+- [Next.js 16](https://nextjs.org/) dengan App Router
+- React 19 dan TypeScript
+- Tailwind CSS 4
+- Zustand untuk state keranjang
+- Framer Motion untuk animasi UI
+- Lucide React untuk ikon
+- Midtrans Snap untuk pembayaran
+- jsPDF untuk receipt
+
+## Struktur Route
+
+| Route | Keterangan |
+| --- | --- |
+| `/` | Halaman kasir dan katalog menu |
+| `/auth` | Halaman login admin |
+| `/admin/dashboard` | Dashboard admin |
+| `/api/menu` | API GET untuk mengambil data menu |
+| `/api/checkout` | API POST untuk membuat transaksi Midtrans |
+| `/api/payment/notification` | Webhook notifikasi status pembayaran |
+
+## Menjalankan Project
+
+### Persyaratan
+
+- Node.js 20 atau versi yang lebih baru
+- npm
+- Akun Midtrans, jika ingin mengaktifkan pembayaran sungguhan
+
+### Instalasi
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka [http://localhost:3000](http://localhost:3000) di browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Untuk production:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Konfigurasi Midtrans
 
-To learn more about Next.js, take a look at the following resources:
+Buat file `.env.local` di root project:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```env
+NEXT_PUBLIC_MIDTRANS_CLIENT_KEY=your_midtrans_client_key
+MIDTRANS_SERVER_KEY=your_midtrans_server_key
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Tanpa `MIDTRANS_SERVER_KEY`, endpoint checkout akan berjalan dalam mode demo dan tidak membuat transaksi pembayaran sungguhan. Environment development menggunakan endpoint sandbox Midtrans, sedangkan production menggunakan endpoint production.
 
-## Deploy on Vercel
+Setelah deploy, arahkan HTTP notification URL Midtrans ke:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+https://your-domain.com/api/payment/notification
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Perintah yang Tersedia
+
+```bash
+npm run dev      # Menjalankan server development
+npm run build    # Membuat build production
+npm run start    # Menjalankan build production
+npm run lint     # Menjalankan ESLint
+```
+
+## Catatan Pengembangan
+
+- Data menu saat ini berasal dari mock data di [`lib/menu-data.ts`](./lib/menu-data.ts).
+- Login admin masih bersifat frontend-only untuk kebutuhan demo.
+- Dashboard admin masih berupa mockup; modul manajemen pada dashboard belum terhubung ke database.
+- Status pembayaran sudah diverifikasi menggunakan signature Midtrans, tetapi persistensi order masih perlu dihubungkan ke database.
+
+## Lisensi
+
+Project ini bersifat privat dan digunakan untuk kebutuhan pengembangan internal.
