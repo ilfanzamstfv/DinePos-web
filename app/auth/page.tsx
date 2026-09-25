@@ -1,11 +1,14 @@
 'use client';
-import { FormEvent, useEffect, useState } from 'react';
+import { AlertCircle, CheckCircle2, ChefHat, ChevronLeft, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { ChefHat, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { FormEvent, useEffect, useState } from 'react';
 type ToastType = 'Success' | 'Error';
 export default function AuthPage() {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [toast, setToast] = useState<{
         show: boolean;
         type: ToastType;
@@ -31,6 +34,9 @@ export default function AuthPage() {
         }
         // Frontend static dulu, role implicit = super_admin
         showToast('Success', 'Login berhasil sebagai Super Admin.');
+        setTimeout(() => {
+            router.push('/admin/dashboard');
+        }, 500);
     };
     return (
         <main className="min-h-screen bg-[#F5F5F0] px-4 py-10">
@@ -59,10 +65,10 @@ export default function AuthPage() {
                     href="/"
                     className="mb-6 inline-flex items-center gap-2 text-sm font-medium text-stone-600 hover:text-[#5D866C]"
                 >
-                    <ChefHat className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4" />
                     Kembali ke kasir
                 </Link>
-                <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+                <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm flex flex-col gap-5">
                     <div className="mb-5 flex items-center gap-2 justify-center">
                         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#5D866C]">
                             <ChefHat className="h-5 w-5 text-white" />
@@ -76,37 +82,52 @@ export default function AuthPage() {
                             </p>
                         </div>
                     </div>
-                    <form onSubmit={handleSubmit} className="space-y-3">
-                        <div>
-                            <label className="mb-1 block text-xs font-semibold text-stone-600">
-                                Email
-                            </label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className="w-full rounded-xl border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-[#5D866C] focus:ring-2 focus:ring-[#5D866C]/20"
-                                placeholder="admin@dinepos.com"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-1 block text-xs font-semibold text-stone-600">
-                                Password
-                            </label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                                minLength={8}
-                                className="w-full rounded-xl border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-[#5D866C] focus:ring-2 focus:ring-[#5D866C]/20"
-                                placeholder="Minimal 8 karakter"
-                            />
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className='flex flex-col gap-6'>
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold text-stone-600">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                    className="w-full rounded-xl border border-stone-200 px-3 py-2.5 text-sm outline-none focus:border-[#5D866C] focus:ring-2 focus:ring-[#5D866C]/20"
+                                    placeholder="Enter your email"
+                                />
+                            </div>
+                            <div>
+                                <label className="mb-1 block text-xs font-semibold text-stone-600">
+                                    Password
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        minLength={8}
+                                        className="w-full rounded-xl border border-stone-200 px-3 py-2.5 pr-10 text-sm outline-none focus:border-[#5D866C] focus:ring-2 focus:ring-[#5D866C]/20"
+                                        placeholder="Enter your password"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 transition-colors hover:text-[#5D866C]"
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="h-4 w-4" />
+                                        ) : (
+                                            <Eye className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <button
                             type="submit"
-                            className="w-full rounded-xl bg-[#5D866C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4a6e58]"
+                            className="w-full rounded-xl mt-5 bg-[#5D866C] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#4a6e58]"
                         >
                             Login
                         </button>

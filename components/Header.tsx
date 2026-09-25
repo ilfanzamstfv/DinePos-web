@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingCart, ChefHat, LogIn } from 'lucide-react';
 import { useCartStore } from '@/store/useCartStore';
@@ -8,6 +9,11 @@ import Link from 'next/link';
 export default function Header() {
     const { itemCount, toggleCart } = useCartStore();
     const count = itemCount();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     return (
         <header className="fixed top-0 left-0 right-0 z-50 h-16 border-b border-stone-200/80 bg-[#F5F5F0]/90 backdrop-blur-md">
@@ -40,13 +46,13 @@ export default function Header() {
                     transition={{ duration: 0.4 }}
                 >
                     <div className="hidden sm:block text-right">
-                        <p className="text-xs font-medium text-stone-500">
-                            {new Date().toLocaleDateString('id-ID', {
+                        <p className="text-xs font-medium text-stone-500 min-w-[150px]">
+                            {mounted ? new Date().toLocaleDateString('id-ID', {
                                 weekday: 'long',
                                 year: 'numeric',
                                 month: 'long',
                                 day: 'numeric',
-                            })}
+                            }) : '\u00A0'}
                         </p>
                     </div>
 
