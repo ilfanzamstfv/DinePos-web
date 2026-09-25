@@ -113,6 +113,4 @@ npm run lint     # Menjalankan ESLint
 - Dashboard admin masih berupa mockup; modul manajemen pada dashboard belum terhubung ke database.
 - Status pembayaran sudah diverifikasi menggunakan signature Midtrans, tetapi persistensi order masih perlu dihubungkan ke database.
 
-## Lisensi
 
-Project ini bersifat privat dan digunakan untuk kebutuhan pengembangan internal.
